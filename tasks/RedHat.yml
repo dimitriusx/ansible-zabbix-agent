@@ -3,9 +3,12 @@
 
 - name: "RedHat | Use EPEL package name"
   set_fact:
-    zabbix_agent_package: "zabbix{{ zabbix_version | regex_replace('\\.', '') }}-agent"
-    zabbix_sender_package: "zabbix{{ zabbix_version | regex_replace('\\.', '') }}-sender"
-    zabbix_get_package: "zabbix{{ zabbix_version | regex_replace('\\.', '') }}-get"
+    "zabbix_{{ item }}_package": "{% if zabbix_version[0]|int >= 3 -%} zabbix-{{ item }}-{{ zabbix_version }} \ 
+                                  {% else -%} zabbix{{ zabbix_version | regex_replace('\\.', '') }}-{{ item }} {%- endif %}"
+  with_items:
+    - agent
+    - get
+    - sender
   when:
     - zabbix_repo == "epel"
   tags:
